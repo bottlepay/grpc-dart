@@ -25,7 +25,7 @@ import 'src/server_utils.dart';
 void main() {
   const dummyValue = 17;
 
-  ServerHarness harness;
+  late ServerHarness harness;
 
   setUp(() {
     harness = ServerHarness()..setUp();
@@ -169,7 +169,7 @@ void main() {
 
   test('Server returns encoded error for unary call', () async {
     Future<int> methodHandler(ServiceCall call, Future<int> request) async {
-      throw GrpcError.unknown("エラー");
+      throw GrpcError.unknown('エラー');
     }
 
     harness
@@ -271,7 +271,7 @@ void main() {
     harness
       ..service.unaryHandler = methodHandler
       ..fromServer.stream.listen(expectAsync1((_) {}, count: 0),
-          onError: expectAsync1((error) {
+          onError: expectAsync1((dynamic error) {
             expect(error, 'TERMINATED');
           }, count: 1),
           onDone: expectAsync0(() {}, count: 1))
@@ -303,7 +303,7 @@ void main() {
       }
 
       final Interceptor interceptor = (call, method) {
-        if (method.name == "Unary") {
+        if (method.name == 'Unary') {
           return null;
         }
         return GrpcError.unauthenticated('Request is unauthenticated');
@@ -325,7 +325,7 @@ void main() {
 
     group('returns error if interceptor blocks request', () {
       final Interceptor interceptor = (call, method) {
-        if (method.name == "Unary") {
+        if (method.name == 'Unary') {
           return GrpcError.unauthenticated('Request is unauthenticated');
         }
         return null;
