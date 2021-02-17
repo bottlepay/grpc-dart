@@ -26,6 +26,14 @@ const defaultIdleTimeout = Duration(minutes: 5);
 const defaultConnectionTimeOut = Duration(minutes: 50);
 const defaultUserAgent = 'dart-grpc/2.0.0';
 
+/// By default, keepalive is disabled and set to null. This means the
+/// client never sends a keepalive ping to the server.
+const defaultKeepaliveTime = null;
+
+/// By default, when keepalive is enabled, if we don't get a keepalive
+/// reply after 20s, the connection will be closed.
+const defaultKeepaliveTimeout = Duration(seconds: 20);
+
 typedef BackoffStrategy = Duration Function(Duration? lastBackoff);
 
 // Backoff algorithm from https://github.com/grpc/grpc/blob/master/doc/connection-backoff.md
@@ -48,6 +56,15 @@ class ChannelOptions {
   final Duration? idleTimeout;
   final CodecRegistry? codecRegistry;
 
+  /// The period after which a keepalive ping is sent on the transport.
+  /// When null, keepalive is disabled.
+  final Duration? keepaliveTime;
+
+  /// The amount of time the sender of the keepalive ping waits for an
+  /// acknowledgement. If it does not receive an acknowledgment within
+  /// this time, it will close the connection.
+  final Duration keepaliveTimeout;
+
   /// The maximum time a single connection will be used for new requests.
   final Duration connectionTimeout;
   final BackoffStrategy backoffStrategy;
@@ -60,5 +77,7 @@ class ChannelOptions {
     this.backoffStrategy = defaultBackoffStrategy,
     this.connectionTimeout = defaultConnectionTimeOut,
     this.codecRegistry,
+    this.keepaliveTime = defaultKeepaliveTime,
+    this.keepaliveTimeout = defaultKeepaliveTimeout,
   });
 }
