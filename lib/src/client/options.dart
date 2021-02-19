@@ -15,6 +15,8 @@
 
 import 'dart:math';
 
+import 'package:grpc/src/client/keepalive/keepalive_options.dart';
+
 import '../shared/codec_registry.dart';
 import 'transport/http2_credentials.dart';
 
@@ -56,14 +58,8 @@ class ChannelOptions {
   final Duration? idleTimeout;
   final CodecRegistry? codecRegistry;
 
-  /// The period after which a keepalive ping is sent on the transport.
-  /// When null, keepalive is disabled.
-  final Duration? keepaliveTime;
-
-  /// The amount of time the sender of the keepalive ping waits for an
-  /// acknowledgement. If it does not receive an acknowledgment within
-  /// this time, it will close the connection.
-  final Duration keepaliveTimeout;
+  /// Keepalive options
+  final KeepaliveOptions keepaliveOptions;
 
   /// The maximum time a single connection will be used for new requests.
   final Duration connectionTimeout;
@@ -77,7 +73,6 @@ class ChannelOptions {
     this.backoffStrategy = defaultBackoffStrategy,
     this.connectionTimeout = defaultConnectionTimeOut,
     this.codecRegistry,
-    this.keepaliveTime = defaultKeepaliveTime,
-    this.keepaliveTimeout = defaultKeepaliveTimeout,
+    this.keepaliveOptions = const KeepaliveOptions(),
   });
 }
